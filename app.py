@@ -2,13 +2,13 @@ from flask import Flask,render_template,request
 import pickle
 import numpy as np
 
-popular_df = pickle.load(open('Artifacts\popular.pkl','rb'))
-pt = pickle.load(open('Artifacts\pt.pkl','rb'))
+popular_df = pickle.load(open('Artifacts\\popular.pkl','rb'))
+pt = pickle.load(open('Artifacts\\pt.pkl','rb'))
 books = pickle.load(open('Artifacts\\books.pkl','rb'))
-similarity_scores = pickle.load(open('Artifacts\similarity_scores.pkl','rb'))
+similarity_scores = pickle.load(open('Artifacts\\similarity_scores.pkl','rb'))
 
 app = Flask(__name__)
-
+  
 @app.route('/')
 def index():
     return render_template('index.html',
@@ -26,6 +26,9 @@ def recommend_ui():
 @app.route('/recommend_books',methods=['post'])
 def recommend():
     user_input = request.form.get('user_input')
+    if user_input not in pt.index:
+        return render_template('recommend.html',data=[])
+    
     index = np.where(pt.index == user_input)[0][0]
     similar_items = sorted(list(enumerate(similarity_scores[index])), key=lambda x: x[1], reverse=True)[1:5]
 
